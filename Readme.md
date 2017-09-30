@@ -1,4 +1,4 @@
-#Грамматика:
+# Грамматика:
 
 * `S->var VARGROUPS`
 * `VARGROUPS->VARLIST: TYPE; VARGRROUPS`
@@ -16,7 +16,7 @@ VARLIST | Список переменных, разделенные запяты
 VAR | Переменная
 TYPE | Тип
 
-##Устранениие правового ветвления:
+## Устранениие правового ветвления:
 
 * `S->var VARGROUPS`
 * `VARGROUPS->VARLIST: TYPE; VARGRROUPS`

@@ -5,7 +5,7 @@
 * `VARGROUPS->VARLIST: WORD; VARGRROUPS`
 * `VARGROUPS->eps`
 * `VARLIST->WORD, VARLIST`
-* `VARLIST->WORD;`
+* `VARLIST->WORD`
 * `WORD->[A-Za-z]WORD`
 
 
@@ -25,7 +25,7 @@ WORD | Переменная или тип
 * `VARGROUPS->eps`
 * `VARLIST->WORDVARLIST'`
 * `VARLIST'->, WORDVARLIST'`
-* `VARLIST'->;`
+* `VARLIST'->eps`
 * `WORD->[A-Za-z]WORD`
 
 Нетерминал    | Значение

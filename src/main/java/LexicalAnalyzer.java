@@ -24,6 +24,7 @@ public class LexicalAnalyzer {
 
     public Token nextToken() throws ParseException {
         skip();
+//        System.out.println((char)curChar);
         switch (curChar) {
             case ',' : curToken = Token.COMMA;
                 break;
@@ -41,7 +42,7 @@ public class LexicalAnalyzer {
                 break;
             default:
                 if (Character.isLetter(curChar)) {
-                    curToken = Token.LETTER;
+                    this.curToken = Token.LETTER;
                 } else {
                     throw new ParseException("Illegal character " + curChar, curPos);
                 }

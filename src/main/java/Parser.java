@@ -1,3 +1,5 @@
+
+import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +9,16 @@ public class Parser {
     private static final Tree SEMICOLONTREE = new Tree(";");
     public static final Tree COMMATREE = new Tree(",");
 
-    LexicalAnalyzer lex;
+    final LexicalAnalyzer lex;
 
-    Tree S() throws ParseException {
+    public Parser(String s) throws ParseException {
+        lex = new LexicalAnalyzer(new ByteArrayInputStream(s.getBytes()));
+        lex.nextToken();
+    }
+
+
+    public Tree S() throws ParseException {
+//        System.out.println("Parser.S " + lex.getCurToken());
         switch (lex.getCurToken()) {
             case V:
                 Tree v = V();
@@ -21,10 +30,12 @@ public class Parser {
     }
 
     private Tree V() throws ParseException {
+//        System.out.println("Parser.V " + lex.getCurToken());
         switch (lex.getCurToken()) {
             case V:
                 assert lex.nextToken() == Token.A;
                 assert lex.nextToken() == Token.R;
+                lex.nextToken();
                 return new Tree("V", new Tree("v"), new Tree("a"), new Tree("r"));
             default:
                 throw new AssertionError();
@@ -33,17 +44,21 @@ public class Parser {
     }
 
     private Tree VARGROUPS() throws ParseException {
+//        System.out.println("Parser.VARGROUPS " + lex.getCurToken());
         switch (lex.getCurToken()) {
             case END:
+                lex.nextToken();
                 return new Tree("VARGROUPS");
             case V:
             case A:
             case R:
             case LETTER:
                 Tree varlist = VARLIST();
-                assert lex.nextToken() == Token.COLON;
+                assert lex.getCurToken() == Token.COLON;
+                lex.nextToken();
                 Tree type = WORD();
-                assert lex.nextToken() == Token.SEMICOLON;
+                assert lex.getCurToken() == Token.SEMICOLON;
+                lex.nextToken();
                 Tree vargroups = VARGROUPS();
                 return new Tree("VARGROUPS", varlist, COLONTREE, type, SEMICOLONTREE, vargroups);
             default:
@@ -52,7 +67,11 @@ public class Parser {
     }
 
     private Tree VARLIST() throws ParseException {
+//        System.out.println("Parser.VARLIST " + lex.getCurToken());
         switch (lex.getCurToken()) {
+            case V:
+            case A:
+            case R:
             case LETTER:
                 Tree word = WORD();
                 Tree varlistprime = VARLISTPRIME();
@@ -63,31 +82,39 @@ public class Parser {
     }
 
     private Tree VARLISTPRIME() throws ParseException {
+//        System.out.println("Parser.VARLISTPRIME " + lex.getCurToken());
         switch (lex.getCurToken()) {
-            case SEMICOLON:
-                lex.nextToken();
-                return new Tree("VARLISTPRIME", SEMICOLONTREE);
             case COMMA:
                 lex.nextToken();
                 Tree word = WORD();
                 Tree varlistprime = VARLISTPRIME();
-                return new Tree("COMMA", COMMATREE, word, varlistprime);
+                return new Tree("VARLISTPRIME", COMMATREE, word, varlistprime);
+            default:
+                return new Tree("VARLISTPRIME", SEMICOLONTREE);
+        }
+    }
+
+    private Tree WORD() throws ParseException {
+//        System.out.println("Parser.WORD " + lex.getCurToken());
+        switch (lex.getCurToken()) {
+            case V:
+            case A:
+            case R:
+            case LETTER:
+                List<Tree> letterTree = new ArrayList<>();
+                do {
+                    letterTree.add(new Tree(String.valueOf(lex.getCurChar())));
+                } while (isLetter(lex.nextToken()));
+//                System.out.println("letter done " + lex.getCurToken());
+                return new Tree("WORD", letterTree.toArray(new Tree[0]));
             default:
                 throw new AssertionError();
         }
     }
 
-    private Tree WORD() throws ParseException {
-        switch (lex.getCurToken()) {
-            case LETTER:
-                List<Tree> letterTree = new ArrayList<>();
-                do {
-                    letterTree.add(new Tree(String.valueOf(lex.getCurChar())));
-                } while (lex.nextToken() == Token.LETTER);
-                return new Tree("WORD", letterTree.toArray(new Tree[0]));
-            default:
-                throw new AssertionError();
-        }
+    private boolean isLetter(Token token) {
+         return token == Token.LETTER || token == Token.A
+                || token == Token.R|| token == Token.V;
     }
 
 }

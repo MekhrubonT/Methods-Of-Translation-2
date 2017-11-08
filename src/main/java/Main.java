@@ -6,7 +6,8 @@ import java.text.ParseException;
 
 public class Main {
     public static void main(String[] args) throws BadStringOperationException {
-        String expression = "var a, b, c: int; d, e, f: double;";
+//        String expression = "var a, b, c: int; d, e, f: double;";
+        String expression = "var a, b, c, d:int; var: double;";
         Tree s;
         try {
             s = new Parser(expression).S();

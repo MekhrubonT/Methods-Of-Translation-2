@@ -19,7 +19,8 @@ public class ParserTester {
         if (random.nextInt(10) < errorMeasure) {
             return "";
         }
-        return RandomStringUtils.randomAlphabetic(random.nextInt(10) + 1);
+        String randomAlphabetic = RandomStringUtils.randomAlphabetic(random.nextInt(10) + 1);
+        return randomAlphabetic.equals("var") ? randomAlphabetic + "a" : randomAlphabetic;
     }
 
     @Test
@@ -100,6 +101,7 @@ public class ParserTester {
             System.out.println("test number #" + i);
             int typesAmount = random.nextInt(tMax - tMin + 1) + tMin;
             String test = declarationWrapper(generateTypeGroups(typesAmount, wMin, wMax, errorMeasure));
+            System.out.println(test);
             Tree tree = new Parser(test).S();
             assertEquals(Main.toCanonical(test), tree.toString());
         }

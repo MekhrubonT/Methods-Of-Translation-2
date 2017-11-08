@@ -1,3 +1,5 @@
+package parser;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -5,12 +7,17 @@ import java.text.ParseException;
 public class LexicalAnalyzer {
     private final InputStream s;
     private int curChar;
+
+    public int getCurPos() {
+        return curPos;
+    }
+
     private int curPos = 0;
     private Token curToken;
 
     public LexicalAnalyzer(InputStream s) throws ParseException {
         this.s = s;
-        nextChar();
+        nextToken();
     }
 
     private void nextChar() throws ParseException {
@@ -23,8 +30,8 @@ public class LexicalAnalyzer {
     }
 
     public Token nextToken() throws ParseException {
+        nextChar();
         skip();
-//        System.out.println((char)curChar);
         switch (curChar) {
             case ',' : curToken = Token.COMMA;
                 break;
@@ -47,7 +54,6 @@ public class LexicalAnalyzer {
                     throw new ParseException("Illegal character " + curChar, curPos);
                 }
         }
-        nextChar();
         return curToken;
     }
 
@@ -57,8 +63,8 @@ public class LexicalAnalyzer {
         }
     }
 
-    public int getCurChar() {
-        return curChar;
+    public char getCurChar() {
+        return (char) curChar;
     }
 
     public Token getCurToken() {
